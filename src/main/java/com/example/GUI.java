@@ -146,19 +146,14 @@ public class GUI {
                 AddBookDialog dialog = new AddBookDialog(frame);
                 dialog.setVisible(true);
                 int n = tableModel.getRowCount();
-//                System.out.printf("%d", book.getTitle().length());
-//                System.out.printf("%s\n", (String) tableModel.getValueAt(1, 0));
                 if (dialog.getBook() != null) {
                     // 將新增的書籍加入到TableModel中
                     Book book = dialog.getBook();
-                    //書名重複
+
+                    //書名重複自動在後面加上編號
                     System.out.printf("%s\n", book.getTitle());
                     addNum = 0;
                     for(int i=0; i<n ; i++){
-//                        if(book.getTitle().startsWith((String) tableModel.getValueAt(i, 0))&& book.getTitle().length() ==  ((String) tableModel.getValueAt(i, 0)).length()){
-//                            addNum++;
-//                        }
-
                         String s = (String) tableModel.getValueAt(i, 0);
                         int endIndex = s.indexOf("(");
                         if(endIndex != -1) s = s.substring(0, endIndex);
@@ -194,7 +189,6 @@ public class GUI {
                     if (result == JOptionPane.YES_OPTION) {
                         // 從TableModel中刪除選中的書籍
                         String bookTitle = (String) tableModel.getValueAt(selectedIndex, 0);
-                        //System.out.printf("%s", title);
                         tableModel.removeRow(selectedIndex);
                         //在資料庫裡刪除
                         database.deleteData(bookTitle);
@@ -209,8 +203,20 @@ public class GUI {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateTableEditable(); // 更新表格的可編輯性
+                updateTableEditable(); // 每次點擊切換表格的可編輯性
                 editButton.setText(isEditable ? "完成編輯" : "編輯"); // 更新按鈕文字
+                //更新在gui上的編輯存到料庫by何
+                int selectedIndex = bookTable.getSelectedRow();
+                if(!isEditable){ // 已完成編輯 更新全部的書名 作者到資料庫
+                    int n = tableModel.getRowCount();// 有幾筆資料
+                    for(int i=0; i<n ; i++){
+                        String content = (String) tableModel.getValueAt(i, 3); //get每個的內容
+                        String title =  (String) tableModel.getValueAt(i, 0); //get每個的書名
+                        String author =  (String) tableModel.getValueAt(i, 1); //get每個的作者
+                        database.editOnGui(content, title, author);
+                    }
+
+                }
             }
         });
 

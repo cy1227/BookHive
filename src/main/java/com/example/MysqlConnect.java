@@ -15,10 +15,10 @@ public class MysqlConnect {
     static Statement query;
     public MysqlConnect(){
         this.connect = null;
-        this.databaseName = "books2";
+        this.databaseName = "books2";   //  改成自己的資料庫名稱
         this.url = "jdbc:mysql://localhost:3306/"+databaseName;
         this.username = "root";
-        this.password = "8812271227";
+        this.password = "8812271227";//  改成自己的root密碼（下載mysql的時候會設定）
     }
     public void connect(){
         try{
@@ -46,6 +46,15 @@ public class MysqlConnect {
         try{
             query = connect.createStatement();
             query.executeUpdate("UPDATE booksContent2 SET 時間 = \""+updateAddTime+"\" , 內容 = \""+updateContent+"\" WHERE 書名 = \""+title+"\";");
+        }catch (SQLException e){
+            Logger.getLogger(MysqlConnect.class.getName()).log(Level.SEVERE, null, e);
+            e.printStackTrace();
+        }
+    }
+    public void editOnGui(String content, String newTitle, String newAuthor){
+        try{
+            query = connect.createStatement();
+            query.executeUpdate("UPDATE booksContent2 SET 書名 = \""+newTitle+"\" , 作者 = \""+newAuthor+"\" WHERE 內容 = \""+content+"\";");
         }catch (SQLException e){
             Logger.getLogger(MysqlConnect.class.getName()).log(Level.SEVERE, null, e);
             e.printStackTrace();
